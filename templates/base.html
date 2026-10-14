@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xoztovars | Onlayn Do'kon</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- NAVBAR -->
+    <nav class="bg-white sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                
+                <!-- LOGO -->
+                <div class="flex items-center gap-2">
+                    <div class="bg-indigo-600 p-2 rounded-lg text-white">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <span class="text-xl font-bold text-gray-800">Xoztovars</span>
+                </div>
+
+                <!-- SEARCH -->
+                <div class="hidden md:block flex-1 max-w-md mx-8">
+                    <div class="relative">
+                        <input type="text"
+                               class="w-full bg-gray-100 border-none rounded-full py-2 px-10 focus:ring-2 focus:ring-indigo-500 outline-none"
+                               placeholder="Mahsulotlarni qidirish...">
+                        <i class="fas fa-search absolute left-4 top-3 text-gray-400"></i>
+                    </div>
+                </div>
+
+                <!-- RIGHT SIDE -->
+                <div class="flex items-center gap-5">
+
+                    <!-- 🔐 ADMIN LOGIN -->
+                    <a href="{% url 'admin_login' %}"
+                       class="text-gray-600 hover:text-indigo-600 transition"
+                       title="Admin panel">
+                        <i class="fas fa-user-shield text-xl"></i>
+                    </a>
+
+                    <!-- 🛒 CART -->
+                    <a href="{% url 'cart' %}"
+                       class="text-gray-600 hover:text-indigo-600 transition relative">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+
+                        {% if cart_count > 0 %}
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                            {{ cart_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+
+                    <!-- MOBILE -->
+                    <button class="md:hidden text-gray-600 text-2xl" id="mobile-menu-btn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENT -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <script src="{% static 'js/main.js' %}"></script>
+
+</body>
+</html>

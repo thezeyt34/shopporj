@@ -1,0 +1,154 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+
+<!-- HEADER -->
+<div class="flex items-center justify-between mb-6">
+
+    <div>
+        <h1 class="text-xl font-bold">{{ order.order_code }}</h1>
+        <p class="text-gray-400 text-sm">
+            {{ order.created_at|date:"d/m/Y, H:i" }}
+        </p>
+    </div>
+
+    <!-- STATUS -->
+    {% if order.status == 'pending' %}
+        <span class="bg-yellow-200 text-yellow-700 px-4 py-1 rounded-full text-sm">
+            Tayyorlanmoqda
+        </span>
+    {% elif order.status == 'ready' %}
+        <span class="bg-green-200 text-green-700 px-4 py-1 rounded-full text-sm">
+            Tayyor
+        </span>
+    {% elif order.status == 'delivered' %}
+        <span class="bg-blue-200 text-blue-700 px-4 py-1 rounded-full text-sm">
+            Yetkazildi
+        </span>
+    {% elif order.status == 'cancelled' %}
+        <span class="bg-red-200 text-red-700 px-4 py-1 rounded-full text-sm">
+            Bekor qilingan
+        </span>
+    {% endif %}
+
+</div>
+
+<!-- ACTION BUTTONS -->
+<form method="POST" action="{% url 'change_status' order.id %}" class="flex gap-3 mb-6">
+    {% csrf_token %}
+
+    <button name="status" value="ready"
+        class="bg-green-500 text-white px-4 py-2 rounded-lg">
+        Tayyor
+    </button>
+
+    <button name="status" value="delivered"
+        class="bg-green-600 text-white px-4 py-2 rounded-lg">
+        Yetkazildi
+    </button>
+
+    <button name="status" value="cancelled"
+        class="bg-red-500 text-white px-4 py-2 rounded-lg">
+        Bekor qilish
+    </button>
+
+</form>
+
+<div class="grid grid-cols-2 gap-6">
+
+    <!-- LEFT -->
+    <div class="bg-white p-6 rounded-xl shadow">
+
+        <h2 class="font-bold mb-4">Mijoz ma’lumotlari</h2>
+
+        <div class="space-y-3 text-sm">
+
+            <div class="flex items-center gap-2">
+                <i class="fa-regular fa-user text-gray-400"></i>
+                {{ order.name }}
+            </div>
+
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-phone text-gray-400"></i>
+                <a href="tel:{{ order.phone }}" class="text-blue-500">
+                    {{ order.phone }}
+                </a>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-credit-card text-gray-400"></i>
+                Naqd pul
+            </div>
+
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-truck text-gray-400"></i>
+                Yetkazib berish
+            </div>
+
+        </div>
+
+        <hr class="my-4">
+
+        <!-- ADDRESS -->
+        {% if order.address %}
+        <div class="text-sm mb-4">
+            <i class="fa-solid fa-location-dot text-gray-400 mr-2"></i>
+            {{ order.address }}
+        </div>
+
+        <!-- MAP -->
+        <iframe
+            src="https://maps.google.com/maps?q={{ order.address|urlencode }}&output=embed"
+            class="w-full h-56 rounded-lg border">
+        </iframe>
+        {% endif %}
+
+        <hr class="my-4">
+
+        <!-- COMMENT -->
+        <div class="text-sm">
+            <p class="text-gray-400">Izoh:</p>
+            <p>{{ order.comment|default:"-" }}</p>
+        </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="bg-white p-6 rounded-xl shadow">
+
+        <h2 class="font-bold mb-4">Buyurtma tarkibi</h2>
+
+        {% if items %}
+            {% for item in items %}
+            <div class="flex justify-between border-b py-3 text-sm">
+
+                <div>
+                    <p class="font-medium">{{ item.product.name }}</p>
+                    <p class="text-gray-400">
+                        {{ item.quantity }} x {{ item.product.price }} so'm
+                    </p>
+                </div>
+
+                <p class="font-semibold">
+                    {{ item.total_price }} so'm
+                </p>
+
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-gray-400">Mahsulot yo‘q</p>
+        {% endif %}
+
+        <!-- TOTAL -->
+        <div class="flex justify-between mt-4 text-lg font-bold">
+            <span>Jami:</span>
+            <span class="text-indigo-600">
+                {{ order.total_price }} so'm
+            </span>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

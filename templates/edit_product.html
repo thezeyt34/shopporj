@@ -1,0 +1,148 @@
+{% extends 'admin_base.html' %}
+{% block content %}
+
+<!-- OVERLAY -->
+<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+    <!-- MODAL -->
+    <div class="bg-white w-[700px] rounded-2xl shadow-2xl p-6 relative">
+
+        <!-- CLOSE -->
+        <a href="{% url 'products' %}" 
+           class="absolute top-4 right-4 text-gray-400 hover:text-black text-xl">
+            ✕
+        </a>
+
+        <!-- TITLE -->
+        <h2 class="text-lg font-semibold mb-4">
+            Mahsulotni tahrirlash
+        </h2>
+
+        <!-- TABS -->
+        <div class="flex gap-2 mb-6 bg-gray-100 p-1 rounded-lg text-sm">
+            <button class="px-4 py-2 bg-white rounded-md shadow">Asosiy</button>
+            <button class="px-4 py-2 text-gray-400">Rasmlar</button>
+            <button class="px-4 py-2 text-gray-400">Variantlar</button>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- NAME + SLUG -->
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="text-sm">Nomi *</label>
+                    <input name="name" value="{{ product.name }}"
+                        class="w-full border px-4 py-2 rounded-lg mt-1">
+                </div>
+
+                <div>
+                    <label class="text-sm">Slug</label>
+                    <input value="{{ product.name|slugify }}"
+                        class="w-full border px-4 py-2 rounded-lg mt-1">
+                </div>
+            </div>
+
+            <!-- CATEGORY + SKU -->
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="text-sm">Kategoriya</label>
+                    <select name="category" class="w-full border px-4 py-2 rounded-lg mt-1">
+                        {% for c in categories %}
+                        <option value="{{ c.id }}" 
+                            {% if product.category.id == c.id %}selected{% endif %}>
+                            {{ c.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-sm">Artikul (SKU)</label>
+                    <input class="w-full border px-4 py-2 rounded-lg mt-1">
+                </div>
+            </div>
+
+            <!-- DESCRIPTION -->
+            <div class="mb-4">
+                <label class="text-sm">Tavsif</label>
+                <textarea name="description"
+                    class="w-full border px-4 py-2 rounded-lg mt-1 h-24">{{ product.description }}</textarea>
+            </div>
+
+            <!-- PRICES -->
+            <div class="grid grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label class="text-sm">Tannarx *</label>
+                    <input type="number" name="cost" value="{{ product.cost }}"
+                        class="w-full border px-4 py-2 rounded-lg mt-1">
+                </div>
+
+                <div>
+                    <label class="text-sm">Sotuv narxi *</label>
+                    <input type="number" name="price" value="{{ product.price }}"
+                        class="w-full border px-4 py-2 rounded-lg mt-1">
+                </div>
+
+                <div>
+                    <label class="text-sm">Eski narx</label>
+                    <input class="w-full border px-4 py-2 rounded-lg mt-1">
+                </div>
+            </div>
+
+            <!-- STOCK -->
+            <div class="grid grid-cols-4 gap-4 mb-6">
+                <div>
+                    <label class="text-sm">Omborda</label>
+                    <input type="number" name="quantity" value="{{ product.quantity }}"
+                        class="w-full border px-4 py-2 rounded-lg mt-1">
+                </div>
+
+                <div>
+                    <label class="text-sm">Min. buyurtma</label>
+                    <input value="1"
+                        class="w-full border px-4 py-2 rounded-lg mt-1">
+                </div>
+
+                <div>
+                    <label class="text-sm">Qadam</label>
+                    <input value="1"
+                        class="w-full border px-4 py-2 rounded-lg mt-1">
+                </div>
+
+                <div>
+                    <label class="text-sm">Birlik</label>
+                    <select name="type"
+                        class="w-full border px-4 py-2 rounded-lg mt-1">
+                        <option value="dona" {% if product.type == 'dona' %}selected{% endif %}>Dona</option>
+                        <option value="kg" {% if product.type == 'kg' %}selected{% endif %}>Kg</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- IMAGE URL -->
+            <div class="mb-6">
+                <label class="text-sm">Rasm URL</label>
+                <input name="image_url" value="{{ product.image_url }}"
+                    class="w-full border px-4 py-2 rounded-lg mt-1">
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="flex justify-end gap-3">
+                <a href="{% url 'products' %}" 
+                   class="px-4 py-2 bg-gray-200 rounded-lg">
+                    Bekor
+                </a>
+
+                <button class="px-6 py-2 bg-indigo-600 text-white rounded-lg">
+                    Saqlash
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

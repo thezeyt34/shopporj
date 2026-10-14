@@ -1,0 +1,172 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f5f7fb;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+        }
+
+        /* HEADER */
+        .header {
+            height: 70px;
+            background: white;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: white;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            height: calc(100vh - 70px);
+            /* 🔥 ФИКС */
+            border-right: 1px solid #eee;
+        }
+
+        /* CONTENT */
+        .content {
+            margin-left: 260px;
+            padding: 30px;
+            padding-top: 100px;
+            /* 🔥 ВОТ ГЛАВНЫЙ ФИКС */
+        }
+
+        /* MENU */
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .menu-item i {
+            width: 20px;
+        }
+
+        .menu-active {
+            background: linear-gradient(to right, #6366f1, #7c3aed);
+            color: white;
+        }
+
+        .menu-item:hover {
+            background: #f3f4f6;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- 🔥 HEADER (ВОТ ЧЕГО У ТЕБЯ НЕ БЫЛО) -->
+    <div class="header">
+
+        <div class="flex items-center gap-3">
+            <div class="bg-indigo-600 text-white p-2 rounded-lg">
+                <i class="fa-solid fa-box"></i>
+            </div>
+            <span class="font-semibold text-lg">Xoztovars</span>
+        </div>
+
+        <div class="w-1/3">
+            <input type="text" placeholder="Mahsulotlarni qidirish..."
+                class="w-full bg-gray-100 px-4 py-2 rounded-full outline-none">
+        </div>
+
+        <div class="flex items-center gap-6">
+            <i class="fa-regular fa-bell text-gray-500"></i>
+            <i class="fa-solid fa-cart-shopping text-gray-500"></i>
+        </div>
+
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar p-6">
+
+        <div class="flex items-center gap-3 mb-10">
+            <div class="text-2xl">🧱</div>
+            <div>
+                <h2 class="font-semibold">Nimadir shop</h2>
+                <p class="text-xs text-gray-400">QurilishBozor</p>
+            </div>
+        </div>
+
+        <div class="space-y-2">
+
+            <a href="{% url 'dashboard' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'dashboard' %}menu-active{% endif %}">
+                <i class="fa-solid fa-border-all"></i> Dashboard
+            </a>
+
+            <a href="{% url 'orders' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'orders' or request.resolver_match.url_name == 'order_detail' %}menu-active{% endif %}">
+                <i class="fa-solid fa-cart-shopping"></i> Buyurtmalar
+            </a>
+
+            <a href="{% url 'customers' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'customers' %}menu-active{% endif %}">
+                <i class="fa-regular fa-user"></i> Mijozlar
+            </a>
+
+            <a href="{% url 'products' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'products' %}menu-active{% endif %}">
+                <i class="fa-solid fa-cube"></i> Mahsulotlar
+            </a>
+
+            <a href="{% url 'categories' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'categories' %}menu-active{% endif %}">
+                <i class="fa-solid fa-tags"></i> Kategoriyalar
+            </a>
+
+            <a href="{% url 'finance' %}" class="menu-item {% if request.path == '/finance/' %}menu-active{% endif %}">
+                <i class="fa-solid fa-dollar-sign"></i> Moliya
+            </a>
+
+
+            <a href="/" class="menu-item">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Do‘konni ko‘rish
+            </a>
+
+        </div>
+
+        <div class="absolute bottom-6 left-6">
+            <a href="{% url 'admin_logout' %}" class="text-gray-400 text-sm">
+                Chiqish
+            </a>
+        </div>
+
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+
+</html>

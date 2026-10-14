@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<a href="{% url 'cart' %}" class="text-gray-500 flex items-center gap-2 mb-4">
+    ← Savatga qaytish
+</a>
+
+<h1 class="text-2xl font-bold mb-6">Buyurtmani rasmiylashtirish</h1>
+
+<form method="POST" action="{% url 'create_order' %}">
+{% csrf_token %}
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+    <!-- LEFT -->
+    <div class="md:col-span-2 space-y-6">
+
+        <!-- CONTACT -->
+        <div class="bg-gray-50 p-6 rounded-2xl">
+            <h2 class="font-bold mb-4">Aloqa ma’lumotlari</h2>
+
+            <div class="grid grid-cols-2 gap-4">
+                <input name="name" required
+                       class="border rounded-xl p-3 focus:ring-2 focus:ring-indigo-500"
+                       placeholder="To‘liq ismingiz">
+
+                <input name="phone" required
+                       class="border rounded-xl p-3 focus:ring-2 focus:ring-indigo-500"
+                       placeholder="+998 90 123 45 67">
+            </div>
+        </div>
+
+        <!-- DELIVERY -->
+        <div class="bg-gray-50 p-6 rounded-2xl">
+            <h2 class="font-bold mb-4">Yetkazib berish</h2>
+
+            <div class="flex gap-4 mb-4">
+
+                <button type="button" onclick="selectDelivery('pickup')" id="pickupBtn"
+                        class="delivery-btn active">
+                    🏬 Olib ketish
+                    <p class="text-xs text-gray-400">Do‘kondan o‘zingiz olasiz</p>
+                </button>
+
+                <button type="button" onclick="selectDelivery('delivery')" id="deliveryBtn"
+                        class="delivery-btn">
+                    🚚 Yetkazib berish
+                    <p class="text-xs text-gray-400">Manzilingizga yetkazamiz</p>
+                </button>
+
+            </div>
+
+            <input type="hidden" name="address" id="addressInput">
+
+            <!-- MAP -->
+            <div id="mapBlock" class="hidden">
+                <div id="map" class="h-64 rounded-xl mb-3"></div>
+
+                <div class="bg-white p-3 rounded-xl text-sm">
+                    📍 Tanlangan manzil:
+                    <span id="address">Tanlanmagan</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAYMENT -->
+        <div class="bg-gray-50 p-6 rounded-2xl">
+            <h2 class="font-bold mb-4">To‘lov usuli</h2>
+
+            <div class="flex gap-4">
+                <button type="button" onclick="selectPayment(this)" class="pay-btn active">Naqd</button>
+                <button type="button" onclick="selectPayment(this)" class="pay-btn">Karta</button>
+                <button type="button" onclick="selectPayment(this)" class="pay-btn">O‘tkazma</button>
+            </div>
+        </div>
+
+        <!-- COMMENT -->
+        <div class="bg-gray-50 p-6 rounded-2xl">
+            <h2 class="font-bold mb-4">Izoh</h2>
+            <textarea name="comment" class="w-full border rounded-xl p-3"></textarea>
+        </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="bg-gray-50 p-6 rounded-2xl h-fit">
+        <h2 class="font-bold mb-4">Buyurtma</h2>
+
+        {% for item in items %}
+        <div class="flex justify-between text-sm mb-2">
+            <span>{{ item.product.name }}</span>
+            <span>{{ item.total_price }} so'm</span>
+        </div>
+        {% endfor %}
+
+        <hr class="my-4">
+
+        <p class="text-xl font-bold text-indigo-600 mb-4">
+            Jami: {{ total }} so'm
+        </p>
+
+        <button type="submit"
+            class="w-full bg-indigo-600 text-white py-3 rounded-xl hover:bg-indigo-700">
+            Buyurtmani tasdiqlash
+        </button>
+    </div>
+
+</div>
+
+</form>
+
+<!-- STYLES -->
+<style>
+.delivery-btn {
+    flex: 1;
+    border: 2px solid #e5e7eb;
+    padding: 12px;
+    border-radius: 12px;
+}
+.delivery-btn.active {
+    border-color: #4f46e5;
+    background: #eef2ff;
+}
+.pay-btn {
+    flex: 1;
+    border: 2px solid #e5e7eb;
+    padding: 12px;
+    border-radius: 12px;
+}
+.pay-btn.active {
+    border-color: #4f46e5;
+    background: #eef2ff;
+}
+</style>
+
+<!-- MAP -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+let map, marker;
+
+// DELIVERY
+function selectDelivery(type) {
+    document.getElementById('pickupBtn').classList.remove('active');
+    document.getElementById('deliveryBtn').classList.remove('active');
+
+    if (type === 'pickup') {
+        document.getElementById('pickupBtn').classList.add('active');
+        document.getElementById('mapBlock').classList.add('hidden');
+        document.getElementById('addressInput').value = "Pickup";
+    } else {
+        document.getElementById('deliveryBtn').classList.add('active');
+        document.getElementById('mapBlock').classList.remove('hidden');
+
+        if (!map) {
+            map = L.map('map').setView([41.2995, 69.2401], 12);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+            map.on('click', function(e) {
+                if (marker) map.removeLayer(marker);
+
+                marker = L.marker(e.latlng).addTo(map);
+
+                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        let addr = data.display_name;
+                        document.getElementById('address').innerText = addr;
+                        document.getElementById('addressInput').value = addr;
+                    });
+            });
+        }
+    }
+}
+
+// PAYMENT
+function selectPayment(el) {
+    document.querySelectorAll('.pay-btn').forEach(btn => btn.classList.remove('active'));
+    el.classList.add('active');
+}
+</script>
+
+{% endblock %}

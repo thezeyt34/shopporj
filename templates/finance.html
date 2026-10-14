@@ -1,0 +1,144 @@
+{% extends 'admin_base.html' %}
+{% block content %}
+
+<h1 class="text-2xl font-bold mb-6">Moliya</h1>
+
+<!-- CARDS -->
+<div class="grid grid-cols-4 gap-6 mb-4">
+
+    <div class="bg-white p-4 rounded-xl shadow">
+        <p class="text-gray-400 text-sm">Umumiy daromad</p>
+        <h2 class="text-xl font-bold">{{ total_income }} so'm</h2>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl shadow">
+        <p class="text-gray-400 text-sm">Umumiy tannarx</p>
+        <h2 class="text-xl font-bold">{{ total_cost }} so'm</h2>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl shadow">
+        <p class="text-gray-400 text-sm">Sof foyda</p>
+        <h2 class="text-xl font-bold text-green-600">{{ profit }} so'm</h2>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl shadow">
+        <p class="text-gray-400 text-sm">O'rtacha chek</p>
+        <h2 class="text-xl font-bold">{{ avg_check }} so'm</h2>
+    </div>
+
+</div>
+
+<!-- EXTRA CARDS -->
+<div class="grid grid-cols-3 gap-6 mb-6">
+
+    <div class="bg-white p-4 rounded-xl shadow">
+        Foyda foizi: <b>{{ profit_percent }}%</b>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl shadow">
+        Buyurtmalar: <b>{{ orders_count }}</b>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl shadow text-red-500">
+        Trend: {{ trend }}%
+    </div>
+
+</div>
+
+<!-- GRAPH -->
+<div class="bg-white p-6 rounded-xl shadow mb-6">
+    <h2 class="font-bold mb-4">Kunlik daromad va foyda</h2>
+    <canvas id="financeChart"></canvas>
+</div>
+
+<!-- TABLE + DONUT -->
+<div class="grid grid-cols-2 gap-6">
+
+    <!-- TABLE -->
+    <div class="bg-white p-6 rounded-xl shadow">
+        <h2 class="font-bold mb-4">Mahsulot bo‘yicha foyda</h2>
+
+        <div class="grid grid-cols-5 text-gray-400 text-xs mb-2">
+            <span>Mahsulot</span>
+            <span>Soni</span>
+            <span>Daromad</span>
+            <span>Foyda</span>
+            <span>Marja</span>
+        </div>
+
+        {% for p in product_stats %}
+        <div class="grid grid-cols-5 border-b py-2 text-sm">
+            <span>{{ p.name }}</span>
+            <span>{{ p.qty }}</span>
+            <span>{{ p.income }} so'm</span>
+            <span class="text-green-600">{{ p.profit }} so'm</span>
+            <span>{{ p.margin }}%</span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- DONUT -->
+    <div class="bg-white p-6 rounded-xl shadow">
+        <h2 class="font-bold mb-4">Buyurtma holatlari</h2>
+        <canvas id="statusChart"></canvas>
+    </div>
+
+</div>
+
+<!-- BAR CHART -->
+<div class="bg-white p-6 rounded-xl shadow mt-6">
+    <h2 class="font-bold mb-4">Top mahsulotlar</h2>
+    <canvas id="barChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// 📈 LINE
+new Chart(document.getElementById('financeChart'), {
+    type: 'line',
+    data: {
+        labels: {{ labels|safe }},
+        datasets: [
+            {
+                label: 'Daromad',
+                data: {{ income_data|safe }},
+                borderColor: '#6366f1',
+                fill: true
+            },
+            {
+                label: 'Foyda',
+                data: {{ profit_data|safe }},
+                borderColor: '#22c55e',
+                fill: true
+            }
+        ]
+    }
+});
+
+// 🍩 DONUT
+new Chart(document.getElementById('statusChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Pending', 'Ready', 'Delivered'],
+        datasets: [{
+            data: [{{ pending }}, {{ ready }}, {{ delivered }}],
+            backgroundColor: ['#6366f1','#f97316','#22c55e']
+        }]
+    }
+});
+
+// 📊 BAR
+new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: {
+        labels: {{ bar_labels|safe }},
+        datasets: [{
+            data: {{ bar_income|safe }},
+            backgroundColor: '#6366f1'
+        }]
+    }
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+/* Maxsus shriftlar va silliq o'tishlar */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8fafc;
+}
+
+.product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.badge-discount {
+    background: linear-gradient(45deg, #ff512f, #dd2476);
+}

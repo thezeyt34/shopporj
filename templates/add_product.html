@@ -1,0 +1,40 @@
+{% extends 'admin_base.html' %}
+{% block content %}
+
+<div class="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow">
+
+<h2 class="text-xl font-bold mb-4">Mahsulot qo'shish</h2>
+
+<form method="POST">
+{% csrf_token %}
+
+<input name="name" placeholder="Nomi" class="w-full border p-2 mb-2">
+
+<textarea name="description" placeholder="Tavsif" class="w-full border p-2 mb-2"></textarea>
+
+<input name="price" placeholder="Sotuv narxi" class="w-full border p-2 mb-2">
+<input name="cost" placeholder="Tannarx" class="w-full border p-2 mb-2">
+<input name="quantity" placeholder="Omborda" class="w-full border p-2 mb-2">
+
+<select name="type" class="w-full border p-2 mb-2">
+    <option value="dona">Dona</option>
+    <option value="kg">Kg</option>
+</select>
+
+<select name="category" class="w-full border p-2 mb-2">
+    {% for c in categories %}
+    <option value="{{ c.id }}">{{ c.name }}</option>
+    {% endfor %}
+</select>
+
+<input name="image_url" placeholder="Rasm URL" class="w-full border p-2 mb-4">
+
+<button class="bg-indigo-600 text-white px-4 py-2 rounded">
+    Saqlash
+</button>
+
+</form>
+
+</div>
+
+{% endblock %}

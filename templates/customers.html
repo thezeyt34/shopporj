@@ -1,0 +1,27 @@
+{% extends 'admin_base.html' %}
+{% block content %}
+
+<h1 class="text-2xl font-bold mb-6">Mijozlar</h1>
+
+<div class="bg-white p-6 rounded-xl shadow">
+
+{% for c in customers %}
+<div class="flex justify-between border-b py-3">
+
+    <div>
+        <p class="font-bold">{{ c.name }}</p>
+        <p class="text-gray-400">{{ c.phone }}</p>
+    </div>
+
+    <div>{{ c.orders }}</div>
+
+    <div class="text-indigo-600 font-bold">
+        {{ c.total }} so'm
+    </div>
+
+</div>
+{% endfor %}
+
+</div>
+
+{% endblock %}

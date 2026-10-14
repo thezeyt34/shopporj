@@ -1,0 +1,43 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+
+<div class="max-w-xl mx-auto bg-white p-6 rounded-xl shadow">
+
+    <h2 class="text-lg font-bold mb-4">Kategoriyani tahrirlash</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- NAME -->
+        <div class="mb-4">
+            <label class="block text-sm mb-1">Nomi</label>
+            <input type="text" name="name"
+                   value="{{ category.name }}"
+                   class="w-full border px-4 py-2 rounded-lg">
+        </div>
+
+        <!-- 🔥 ORDER (НОВОЕ ПОЛЕ) -->
+        <div class="mb-4">
+            <label class="block text-sm mb-1">Tartib (pozitsiya)</label>
+            <input type="number" name="order"
+                   value="{{ category.order }}"
+                   class="w-full border px-4 py-2 rounded-lg">
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="flex justify-end gap-3">
+            <a href="{% url 'categories' %}" class="px-4 py-2 bg-gray-200 rounded-lg">
+                Bekor
+            </a>
+
+            <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg">
+                Saqlash
+            </button>
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}
